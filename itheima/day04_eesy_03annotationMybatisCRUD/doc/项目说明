@@ -1,0 +1,90 @@
+mybatis的注解测试项目：主要是sqlMapconfiguration.xml文件的mappers配置项的不同：用package标签的时候，有xml文件配置文件就用xml配置文件
+，dao上有注解时用注解；但是当有xml和注解同时存在的时候，myabtais会保存，不能确定时用注解还是xml，这是要么删了xml文件，要么将xml文件
+移动到别的路径下面（本项目中就是移动到别的路径下面）
+1、配置
+<mappers>
+    <!--mybatis采用注解方式的时候，class指定dao接口，package是指定注解和xml文件的时候都能用-->
+    <!--<mapper class="com.itheima.dao.IUserDao"/>-->
+    <package name="com.itheima.dao"></package>
+</mappers>
+
+2、当使用注解的时候出现，实体类名和表列名不一致时，使results注解来解决，同时这个id=“resultUser”也可以别的方法引用
+  ```
+   @Select("select *  from user")
+      @Results(id="resultUser",
+              value = {
+              @Result(id=true,property = "uId",column = "id"),
+              @Result(property = "userName",column = "username"),
+              @Result(property = "userAddress",column = "address"),
+              @Result(property = "userSex",column = "sex"),
+              @Result(property = "userBirthday",column = "birthday")
+              })
+      List<User1> findAll();
+  ```
+3、一对多，关联查询
+```
+public class Account implements Serializable {
+    private Integer aId;
+    private Integer uId;
+    private Double money;
+    //多对一（在mybatis里面认为是一对一）
+    private User user;
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * 查询所有账户信息
+     * @return
+     */
+    @Select("select *  from account")
+    @Results(id="resultAccount",
+    value = {
+            @Result(id=true,property = "aId",column = "id"),
+            @Result(property = "uId",column = "uid"),
+            @Result(property = "money",column = "money"),
+//            这样就可以查询一个账户对应的用户信息，不用像xml那时候，关联查询，立即加载 FetchType.EAGER
+            @Result(property = "user",column = "uid",one =@One(select="com.itheima.dao.IUserDao.findById",fetchType= FetchType.EAGER))
+    })
+    public List<Account> findAll();
+
+```
+
+4、一对多延迟加载
+```
+public class User implements Serializable {
+    private Integer id;
+    private String username;
+    private String address;
+    private String sex;
+    private Date birthday;
+    //一对多，
+    private List<Account> accounts;
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+@Select("select *  from user")
+@Results(id="resultUser",
+    value = {
+            @Result(id=true,property = "id",column = "id"),
+            @Result(property = "username",column = "username"),
+            @Result(property = "sex",column = "sex"),
+            @Result(property = "address",column = "address"),
+            @Result(property = "birthday",column = "birthday"),
+            //一对多查询，使用延迟加载，FetchType.LAZY
+            @Result(property = "accounts",column = "id",many = @Many(select="com.itheima.dao.IAccountDao.findByUid",fetchType= FetchType.LAZY))
+    })
+```
+4、注解开启一级，二级缓存
+一级缓存：是默认开启的，seseeion对象进行，添加，删除，commit（），close（）方法时，会清楚一级缓存
+二级缓存：注解的方式的mybatis只需要：在dao接口上使用 @CacheNamespace(blocking = true)就行了，这个比较简单就没有测试
+```
+@CacheNamespace(blocking = true)
+public interface IUserDao {
+
+```
+

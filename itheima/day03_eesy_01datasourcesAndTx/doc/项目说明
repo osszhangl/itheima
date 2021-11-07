@@ -1,0 +1,15 @@
+1、mybatis中的连接池以及事务控制：mybatis中连接池使用分析；mybatis事务控制分析
+**mybatis中的连接池**，连接池可以减少，获取链接的时间和资源消耗，连接池是用于存储链接的容器，容器其实就是一个集合对象，并且这个集合是线程安全的，不能两个线程拿到同一个链接，该集合还必须实现队列的特性，先进先出。
+mybatis中的连接池，在主配置文件SqlMapConfig.xml中的dataSource标签，type属性就是表示采用何种链接的方式，type的取值有：
+- POOLED ：采用传统的javax.sql.DataSource规范中的连接池，mybatis中有针对规范的实现PooledDataSource看一下他实现原理
+- UNPOOLED：采用传统的获取链接的方式，虽然也实现了javax.sql.DataSource接口，但是并没有使用池的思想，每次使用的时候，获取链接。通过UnpooledDataSource类来实现，看看他的实现原理
+
+POOLED和UNPOOLED可以在配置文件里面直接改配置，在泡一下代码看日志debug输出，会有归还链接池链接的动作
+
+这一部分没有测试：
+- JNDI：采用服务器提供的JNDI技术实现，来获取DataSource对象，bu不同的服务器所能拿到的DataSource对象是不一样的，同事注意，如果不是web和maven的war工程是不能使用的，这边使用的服务器的tomcat服务器，采用的连接池就是DBCP连接池。
+
+**mybatis中的事务**：什么是事务；事务的四大特性ACID；不考虑隔离性会产生的3个问题；解决办法：四种隔离级别
+他是通过sqlsession对象的commit方法和rollback方法实现事务的提交和回滚操作的。在sqlsession.opensession(true),true表示的是自动提交事务，默认是手动提交事务，这样才测试类里面就不用手动提交事务了。
+
+

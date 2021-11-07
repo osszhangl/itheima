@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.dao.IUserDao">
+    <!--查询所有的用户-->
+    <select id="findAll" resultType="com.itheima.domain.User">
+        select *  FROM  USER ;
+    </select>
+    <select id="findById" parameterType="java.lang.Integer" resultType="com.itheima.domain.User">
+        select * from USER where id=#{id}
+
+    </select>
+
+    <!--保存用户-->
+    <select id="save" parameterType="com.itheima.domain.User" >
+        INSERT INTO USER (username,address,sex,birthday) VALUES (#{username},#{address},#{sex},#{birthday})
+    </select>
+
+    <!--更新用户数据-->
+    <update id="updateUser" parameterType="com.itheima.domain.User">
+        UPDATE user  SET username=#{username},address=#{address},sex=#{sex},birthday=#{birthday} WHERE id=#{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="java.lang.Integer">
+        delete from USER  where id=#{id}
+    </delete>
+
+    <!--#对应的占位符，用的比较多，$是字符串的拼接字符,并且接受参数只能写value，因为mybatis在底已经把这value写死了，一般比较少用-->
+    <select id="fandByName" parameterType="string" resultType="com.itheima.domain.User" >
+        <!--select * from USER where username LIKE '%${value}%'-->
+    select * from USER where username LIKE #{username}
+    </select>
+
+    <select id="findCount" resultType="Int" >
+        select count(*) from USER
+
+    </select>
+
+    <!--根据QueryVo的查询条件来查询用户  user.username的使用-->
+    <select id="fandByVo" parameterType="com.itheima.domain.QueryVo" resultType="com.itheima.domain.User">
+        select * from USER  where username LIKE #{user.username}
+
+    </select>
+
+    
+
+    <!--当java的实体类(User1)和数据库中的列明不一致时可以这样配置-->
+    <select id="fandAllUser1" resultMap="userMap2">
+        select *  FROM USER
+
+    </select>
+    <!--配置实体类和数据库列名的对应关系-->
+    <resultMap id="userMap1" type="com.itheima.domain.User1">
+        <!--主键配置-->
+        <id property="uid" column="id"/>
+        <!--非主键配置-->
+        <result property="userName" column="username"/>
+        <result property="userAddress" column="address"/>
+        <result property="userSex" column="sex"/>
+        <result property="userBirthday" column="birthday"/>
+
+    </resultMap>
+
+    <resultMap id="userMap2" type="com.itheima.domain.User2">
+        <!--主键配置-->
+        <id property="myId" column="id"/>
+        <!--非主键配置-->
+        <result property="myName" column="username"/>
+        <result property="myAddress" column="address"/>
+        <result property="mySex" column="sex"/>
+        <result property="myBirthday" column="birthday"/>
+
+    </resultMap>
+
+
+
+</mapper>

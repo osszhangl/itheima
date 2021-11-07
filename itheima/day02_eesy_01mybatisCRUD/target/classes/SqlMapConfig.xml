@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+
+<configuration>
+
+    <!--配置properties
+        可以在标签内部配置数据库链接信息。也可以通过属性引用外部配置文件信息
+        resources属性：常用的
+            用于指定配置文件的位置，是按照类文件的路径来写的，并且必须存在于类文件下。
+        url属性：不常用
+            是要求按照url的写法来写地址
+            URL：Uniform Resource Locator 统一资源定位符，他是可以全网唯一标识一个资源的
+            他的写法：
+            http://localhost:8080/mybatis/demo1
+            协议    主机名   端口   URI
+            URI：Uniform Resource Identifier统一资源标识符，他是在应用中可以唯一标识一个资源的。
+    -->
+    <!--windows系统的查询文件的都是基于file协议的，在实际开发工作中这种方式使用的比较少
+    <properties url="file:///D:/workinstall/ideawoekspaces/itheima/day02_eesy_01mybatisCRUD/src/main/resources/jdbcConfig.properties></properties>-->
+
+    <properties resource="jdbcConfig.properties">
+        <!--<property name="driver" value="com.mysql.jdbc.Driver"/>-->
+        <!--<property name="url" value="jdbc:mysql://localhost:3306/developer"/>-->
+        <!--<property name="username" value="root"/>-->
+        <!--<property name="password" value="176658"/>-->
+
+    </properties>
+
+
+    <!--使用typeAliases标签去别名，他只能配置实体类的别名-->
+    <typeAliases>
+        <!--typeAlisses用于配置别名，type属性用于指定实体类的全限定类名，alias用于指定对应的别名，但是这个别名不区分大小写
+        但是类文件比较多的时候就不是很好用了-->
+        <!--<typeAlias type="com.itheima.domain.User"  alias="user"></typeAlias>-->
+
+        <!--pachage用于指定要配置的包，当指定之后，该包下的所有类都注册了别名，并且别名就是类名不区分大小写，mapper标签内的package也是这个功能用于指定dao-->
+        <package name="com.itheima.domain"></package>
+    </typeAliases>
+
+    <environments default="mysql">
+        <!--配置mysql环境-->
+        <environment id="mysql">
+            <!--配置事务的类型-->
+            <transactionManager type="JDBC"></transactionManager>
+            <!--配置连接池-->
+            <!--配置数据库的链接信息-->
+            <dataSource type="POOLED">
+
+            <property name="driver" value="${driver}"/>
+            <property name="url" value="${url}"/>
+            <property name="username" value="${username}"/>
+            <property name="password" value="${password}"/>
+        </dataSource>
+
+    </environment>
+</environments>
+<mappers>
+    <!--这个mapper标签也有一个URL的属性，和上面properties标的URL是一样的使用方式-->
+    <!--<mapper  resource="com/itheima/dao/IUserDao.xml"/>-->
+
+    <!--当使用这个package指定dao的时候就可以不用resources了，-->
+    <package name="com.itheima.dao"></package>
+</mappers>
+ </configuration>
+
+

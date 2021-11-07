@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+<!--这个约束比原来的bean约束多了一个context约束，用于配置context容器启动时的配置-->
+<!--告知spring在创建容器时，需要扫描的包，配置所需要的标签不是在beans的约束中，而是一个名称为context名称空间和约束中-->
+<!--<context:component-scan base-package="com.itheima"></context:component-scan>-->
+
+    <!--把通过beanFactory创建的service代理对象让spring管理，此时在spring容器中有server对象，一个直接配的，一个代理的-->
+    <bean id="proxyAccountService" factory-bean="beanFactory" factory-method="getiAccountService"></bean>
+
+    <!--配置beanFactory对象-->
+    <bean id="beanFactory" class="com.itheima.factory.BeanFactory">
+        <property name="accountService" ref="accountService"></property>
+        <!--注入事务管理器-->
+        <property name="txManager" ref="txManager"></property>
+    </bean>
+    <!--配置service对象-->
+    <bean id="accountService" class="com.itheima.service.imp.AccountServiceImp">
+        <!--注入dao-->
+        <property name="accountDao" ref="accountDao"></property>
+
+    </bean>
+    <!--配置Dao对象-->
+    <bean id="accountDao" class="com.itheima.dao.iml.AccountDaoImp">
+        <property name="runner" ref="runner"></property>
+        <!--注入connectionUtils-->
+        <property name="connectionUtils" ref="connectionUtils"></property>
+    </bean>
+    <!--配置runner为多例对象-->
+    <bean id="runner" class="org.apache.commons.dbutils.QueryRunner" scope="prototype"></bean>
+        <!--注入数据源-->
+        <!--<constructor-arg name="ds" ref="dataSource"></constructor-arg>-->
+
+    <!--配置数据源信息-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!--配置数据链接信息-->
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/test"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="176658"></property>
+    </bean>
+
+    <!--配置Connection的工具类ConnectionUtils-->
+    <bean id="connectionUtils" class="com.itheima.utils.ConnectionUtils">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!--配置事务管理器-->
+    <bean id="txManager" class="com.itheima.utils.TransactionManager">
+        <property name="connectinUtils" ref="connectionUtils"></property>
+    </bean>
+</beans>

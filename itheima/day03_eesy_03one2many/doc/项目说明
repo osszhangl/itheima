@@ -1,0 +1,10 @@
+mybatis的多表查询:
+一对一查询:IAccountDAo.xml文件中主要列举了实现方式三种(主要的resultMap的配置),
+一对多查询:IuserDao.xml文件的collection配置，注意mybatis会自动去重
+
+
+
+
+
+
+

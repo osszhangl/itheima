@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.dao.IAccountDao">
+
+    <!--还有许多别的方式实现一对多的查询,我这主要列了三种-->
+    <!--1、实现一对一查询，新建一个类，实现一对一关联的查询-->
+    <select id="findAccount"  resultType="accountUser">
+        select  a.*,u.username,u.address  from account a,user u where a.uid=u.id
+    </select>
+
+
+    <!--2、在原有的类上，引用需要查询的在表的为表量来是实现查询-**********start************-->
+    <resultMap id="accountUserMap2" type="account">
+    <!--注解配置-->
+        <id property="id" column="id"/>
+    <!--非注解配置-->
+        <result property="uid" column="uid"/>
+        <result property="money" column="money"/>
+
+        <!--一对一的关系映射，配置封装user的内容 property是User类在Account中变量名称，column是对应的列名，javaType（必填）
+        是对应封装类型
+        -->
+        <association property="user" column="uid" javaType="user">
+            <id property="id" column="id"/>
+            <result property="username" column="username" />
+            <result property="address" column="address"/>
+            <result property="sex" column="sex"/>
+            <result property="birthday" column="birthday"/>
+        </association>
+    </resultMap>
+    <!--2**************end******************************-->
+
+    <!--3/通过级联属性封装结果集-->
+    <resultMap id="accountUserMap3" type="account">
+        <id property="id" column="id"/>
+        <result property="uid" column="uid"/>
+        <result property="money" column="money"/>
+        <result property="user.id" column="uid"/>
+        <result property="user.username" column="username"/>
+        <result property="user.address" column="address"/>
+        <result property="user.sex" column="sex"/>
+        <result property="user.birthday" column="birthday"/>
+    </resultMap>
+
+
+    <select id="findAll" resultMap="accountUserMap3" >
+        select  a.id as id,a.uid as uid,a.money as money,u.*  from account a,user u where a.uid=u.id
+    </select>
+
+    <!--查询所有的账号-->
+    <!--<select id="findAll" resultType="com.itheima.domain.Account">-->
+        <!--select * from account-->
+    <!--</select>-->
+
+
+
+
+</mapper>

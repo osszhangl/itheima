@@ -1,0 +1,11 @@
+什么样的数据能使用缓存，什么样的数据不能使用
+适合使用的缓存：经常查询并且不经常改变的；数据的正确与否最终结果影响不大的。
+不适合使用缓存：经常变化的数据；数据的正确性对最终稿结果影响比较大的例如：商品的库存，银行汇率，股市的牌价
+
+一级缓存：指的是mybaits中sqlsessin对象的缓存当我们执行查询之后，查询的结果会同时存入到sqlSession为我们提供一块区域中，，该区域的结构是一个map。当我们在此查询同样的数据，mybatis会先去sqlsession中chaxun是否有，有的话直接拿来用，当sqlsession对象消失时，mybatis的一级缓存也就消失了（当调用sqlsession的修改，添加，删除，commit（），close（）方法时，会清空一级缓存）
+
+二级缓存：指的是mybatis的sqlsessionFactory对象的缓存。由同一个sqlsessionFactory创建的sqlsession
+共享其缓存，二级缓存使用的步骤：
+第一步：让mybatis框架支持二级缓存（在sqlMapConfiguration中配置）
+第二步：让当前的映射文件支持二级缓存（在IUserDao.xml文件中配置）
+第三步：让当前的操作支持二级缓存（在select标签中配置）

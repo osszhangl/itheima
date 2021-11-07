@@ -1,0 +1,12 @@
+## mybatis的延迟加载
+在对应四种表关系中：
+一对多，多对多：一般采用延迟加载
+多对一，一对一：一般采用的立即加载
+延迟加载需要，增加mybatis的configuration中的setting表的的 lazyLoadingEnabled和 aggressiveLazyLoading属性来开启mybatis的延迟加载。
+  <settings>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+
+

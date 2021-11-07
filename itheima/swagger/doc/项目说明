@@ -1,0 +1,4 @@
+swagger文档生成工具的使用，案例用的是springboot的，springfox-swagger2和springfox-swagger-ui
+访问路径：http://localhost:8080/swagger-ui.html
+在myapp类中，启动
+

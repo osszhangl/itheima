@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itheima.dao.IUserDao">
+
+    <!--用于抽取抽取重复的sql，供别的引用-->
+    <sql id="defaultUser">
+        select * from USER
+    </sql>
+
+    <!--查询所有的用户-->
+    <select id="findAll" resultType="com.itheima.domain.User">
+        <!--引用上面重复的sql，减少代码量-->
+        <include refid="defaultUser"/>
+    </select>
+    <select id="findById" parameterType="java.lang.Integer" resultType="com.itheima.domain.User">
+        <include refid="defaultUser"/> where id=#{id}
+
+    </select>
+
+    <!--#对应的占位符，用的比较多，$是字符串的拼接字符,并且接受参数只能写value，因为mybatis在底已经把这value写死了，一般比较少用-->
+    <select id="fandByName" parameterType="string" resultType="com.itheima.domain.User">
+        <!--select * from USER where username LIKE '%${value}%'-->
+        <include refid="defaultUser"/> where username LIKE #{username}
+    </select>
+
+    <!--根据QueryVo的查询条件来查询用户  user.username的使用-->
+    <select id="fandByVo" parameterType="com.itheima.domain.QueryVo" resultType="com.itheima.domain.User">
+        <include refid="defaultUser"/>  where username LIKE #{user.username}
+
+    </select>
+
+    <select id="fandByContition" parameterType="com.itheima.domain.User" resultType="com.itheima.domain.User">
+        <include refid="defaultUser"/>
+        <!--发现不写 ！= 也是可以判断的-->
+        <!--<if test="username" >
+        <if test="username != null">
+            and username=#{username}
+        </if>
+        <if test="sex !=null">
+            and sex=#{sex}
+        </if>-->
+
+        <!--也可以使用where的方式，可以省略代码里面的 1=1-->
+        <where>
+            <if test="username != null">
+                and username=#{username}
+            </if>
+            <if test="sex !=null">
+                and sex=#{sex}
+            </if>
+
+        </where>
+
+    </select>
+
+    <select id="fandByIds"  parameterType="queryvo" resultType="user">
+        <include refid="defaultUser"/>
+        <where>
+            <if test="ids !=null and ids.size()>0">  <!--这边的判断写法时要按照的sql里面规范来写的，不能按照java的规则来-->
+                <!--这里有点需要注意的时，这个#中的变量名的是取item项的值，与item保持一致-->
+                <foreach collection="ids"   open="and id in (" close=")" item="uid" separator=",">
+                    #{uid}
+                </foreach>
+            </if>
+
+        </where>
+
+    </select>
+
+</mapper>

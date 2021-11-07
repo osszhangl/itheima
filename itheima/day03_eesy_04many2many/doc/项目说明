@@ -1,0 +1,26 @@
+create TABLE role (
+	id int(11) not null  COMMENT '角色id',
+	role_name VARCHAR(30) default null COMMENT '角色名称',
+	role_desc VARCHAR(60) default null COMMENT '角色描述',
+	PRIMARY KEY (id)
+)
+
+
+INSERT into role (id,role_name,role_desc)VALUES(1,'院长','管理整个学院'),(2,'总裁','管理整个公司')，(3,'校长','管理整学校')
+
+CREATE TABLE user_role (
+uid INT(11) not NULL COMMENT '用户id',
+rid int(11) not null COMMENT '角色di',
+PRIMARY KEY (uid,rid),
+KEY FK_Reference_10(rid),
+CONSTRAINT FK_Reference_10 FOREIGN KEY (rid) REFERENCES role (id),
+CONSTRAINT FK_Reference_9 FOREIGN KEY (uid) REFERENCES `user` (id)
+)
+
+INSERT into user_role(uid,rid)VALUES(21,1),(25,1),(21,2)
+
+mybatis的多对多查询，角色和用户的关系
+多个用户，拥有多个角色
+多个角色，属于多个用户
+
+
